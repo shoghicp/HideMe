@@ -30,7 +30,7 @@ class HideMe implements Plugin{
 	public function dataPacketHandler(DataPacketSendEvent $event){
 		$packet = $event->getPacket();
 		
-		if(($packet instanceof AddPlayerPacket) or ($packet instanceof MoveEntityPacket_PosRot) or ($packet instanceof RemovePlayerPacket)){
+		if(($packet instanceof AddPlayerPacket) or ($packet instanceof MovePlayerPacket) or ($packet instanceof RemovePlayerPacket)){
 			if(isset($this->hideEntities[$packet->eid])){
 				$event->setCancelled();
 			}
@@ -49,7 +49,7 @@ class HideMe implements Plugin{
 				
 				if($player instanceof Player){
 					if(isset($this->hideEntities[$player->entity->eid])){
-						$output = "You are now visible.\n";
+						$output = $issuer !== $player ? $player->username." is now visible.\n":"You are now visible.\n";
 						unset($this->hideEntities[$player->entity->eid]);						
 						$pk = new AddPlayerPacket;
 						$pk->clientID = 0;
@@ -75,7 +75,7 @@ class HideMe implements Plugin{
 							}
 						}
 					}else{
-						$output = "You are now hidden.\n";
+						$output = $issuer !== $player ? $player->username." is now hidden.\n":"You are now hidden.\n";
 						
 						$pk = new RemovePlayerPacket;
 						$pk->clientID = 0;
